@@ -44,7 +44,7 @@ namespace Valuator.Pages
             _storage.Load(textKey, text);
 
             string rankKey = "RANK-" + id;
-            var countLetter = text.Where(x => Char.IsLetter(x)).Count();
+            var countLetter = text.Where(x => !Char.IsLetter(x)).Count();
             double rank = (double) countLetter / text.Count();
             _storage.Load(rankKey, rank.ToString());
 
