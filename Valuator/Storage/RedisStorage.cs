@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using StackExchange.Redis;
+﻿using StackExchange.Redis;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,13 +6,11 @@ namespace Valuator.Storage
 {
     public class RedisStorage : IStorage
     {
-        private readonly ILogger<RedisStorage> _logger;
         private readonly IConnectionMultiplexer _connection;
         private readonly IDatabase _db;
 
-        public RedisStorage(ILogger<RedisStorage> logger)
+        public RedisStorage()
         {
-            _logger = logger;
             _connection = ConnectionMultiplexer.Connect("localhost, allowAdmin=true");
             _db = _connection.GetDatabase();
         }
