@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
@@ -23,7 +21,6 @@ namespace Valuator.Pages
 
         public void OnGet()
         {
-
         }
 
         public IActionResult OnPost(string text)
@@ -33,22 +30,30 @@ namespace Valuator.Pages
             string id = Guid.NewGuid().ToString();
 
             string similarityKey = "SIMILARITY-" + id;
-            int simularity = 0;
-            if (_storage.GetValues("TEXT-").Where(x => x == text).Count() > 0)
-            {
-                simularity = 1;
-            }
-            _storage.Load(similarityKey, simularity.ToString());
+            _storage.Load(similarityKey, CalculateSimilarity(text).ToString());
 
             string textKey = "TEXT-" + id;
             _storage.Load(textKey, text);
 
             string rankKey = "RANK-" + id;
-            var countLetter = text.Where(x => !Char.IsLetter(x)).Count();
-            double rank = (double) countLetter / text.Count();
-            _storage.Load(rankKey, rank.ToString());
+            _storage.Load(rankKey, CalculateRank(text).ToString());
 
             return Redirect($"summary?id={id}");
+        }
+
+        public double CalculateRank(string text)
+        {
+            var countLetter = text.Where(x => !Char.IsLetter(x)).Count();
+            return (double)countLetter / text.Count();
+        }
+
+        public double CalculateSimilarity(string text)
+        {
+            if (_storage.GetValues("TEXT-").Where(x => x == text).Count() > 0)
+            {
+                return (double)1.0;
+            }
+            return (double)0.0;
         }
     }
 }

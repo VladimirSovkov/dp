@@ -6,13 +6,14 @@ namespace Valuator.Storage
 {
     public class RedisStorage : IStorage
     {
-        private readonly IConnectionMultiplexer _connection;
+        private readonly IConnectionMultiplexer _connection = ConnectionMultiplexer.Connect("localhost, allowAdmin=true");
         private readonly IDatabase _db;
+        private readonly IServer _server;
 
         public RedisStorage()
         {
-            _connection = ConnectionMultiplexer.Connect("localhost, allowAdmin=true");
             _db = _connection.GetDatabase();
+            _server = _connection.GetServer("localhost", 6379);
         }
 
         public void Load(string key, string value)
@@ -27,8 +28,7 @@ namespace Valuator.Storage
 
         public List<string> GetValues(string prefix)
         {
-            var server = _connection.GetServer("localhost", 6379);
-            var keys = server.Keys(pattern: "*" + prefix + "*");
+            var keys = _server.Keys(pattern: "*" + prefix + "*");
             return keys.Select(x => GetValue(x)).ToList();
         }
     }
