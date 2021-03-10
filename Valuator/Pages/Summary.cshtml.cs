@@ -27,8 +27,8 @@ namespace Valuator.Pages
         public void OnGet(string id)
         {
             _logger.LogDebug(id);
-            Rank = Math.Round(Convert.ToDouble(_storage.GetValue("RANK-" + id)), 2);
-            Similarity = Math.Round(Convert.ToDouble(_storage.GetValue("SIMILARITY-" + id)));
+            Rank = Math.Round(Convert.ToDouble(_storage.GetValue(Constants.RANK_PREFIX + id)), 2);
+            Similarity = Math.Round(Convert.ToDouble(_storage.GetValue(Constants.SIMILARITY_PREFIX + id)));
         }
     }
 }

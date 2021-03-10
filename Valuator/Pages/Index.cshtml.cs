@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using NATS.Client;
 using Valuator.Storage;
 
 namespace Valuator.Pages
@@ -32,23 +35,36 @@ namespace Valuator.Pages
 
             string id = Guid.NewGuid().ToString();
 
-            string similarityKey = "SIMILARITY-" + id;
+            string similarityKey = Constants.SIMILARITY_PREFIX + id;
             int simularity = 0;
-            if (_storage.GetValues("TEXT-").Where(x => x == text).Count() > 0)
+            if (_storage.GetValues(Constants.TEXT_PREFIX).Where(x => x == text).Count() > 0)
             {
                 simularity = 1;
             }
             _storage.Load(similarityKey, simularity.ToString());
 
-            string textKey = "TEXT-" + id;
+            string textKey = Constants.TEXT_PREFIX + id;
             _storage.Load(textKey, text);
 
-            string rankKey = "RANK-" + id;
-            var countLetter = text.Where(x => !Char.IsLetter(x)).Count();
-            double rank = (double) countLetter / text.Count();
-            _storage.Load(rankKey, rank.ToString());
+            CancellationTokenSource cts = new CancellationTokenSource();
+            Task.Factory.StartNew(() => CalculateAndSaveRank(id), cts.Token);
 
             return Redirect($"summary?id={id}");
+        }
+
+        private async Task CalculateAndSaveRank(string id)
+        {
+            ConnectionFactory cf = new ConnectionFactory();
+
+            using (IConnection c = cf.CreateConnection())
+            {
+                byte[] data = Encoding.UTF8.GetBytes(id);
+                c.Publish(Constants.RANK_CALCULATE_EVENT_NAME, data);
+                await Task.Delay(1000);
+
+                c.Drain();
+                c.Close();
+            }
         }
     }
 }

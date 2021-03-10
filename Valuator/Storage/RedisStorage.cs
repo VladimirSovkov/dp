@@ -6,12 +6,11 @@ namespace Valuator.Storage
 {
     public class RedisStorage : IStorage
     {
-        private readonly IConnectionMultiplexer _connection;
+        private readonly IConnectionMultiplexer _connection = ConnectionMultiplexer.Connect("localhost, allowAdmin=true");
         private readonly IDatabase _db;
 
         public RedisStorage()
         {
-            _connection = ConnectionMultiplexer.Connect("localhost, allowAdmin=true");
             _db = _connection.GetDatabase();
         }
 
