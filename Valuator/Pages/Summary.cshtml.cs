@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+using System.Threading;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Valuator.Storage;
@@ -13,6 +10,8 @@ namespace Valuator.Pages
     {
         private readonly ILogger<SummaryModel> _logger;
         private readonly IStorage _storage;
+        private readonly int MaxWaitingTime = 100;
+        private readonly TimeSpan DelayTime = TimeSpan.FromSeconds(0.01);
 
         public SummaryModel(ILogger<SummaryModel> logger,
             IStorage storage)
@@ -27,8 +26,28 @@ namespace Valuator.Pages
         public void OnGet(string id)
         {
             _logger.LogDebug(id);
-            Rank = Math.Round(Convert.ToDouble(_storage.GetValue(Constants.RANK_PREFIX + id)), 2);
+            Rank = GetRank(id);
             Similarity = Math.Round(Convert.ToDouble(_storage.GetValue(Constants.SIMILARITY_PREFIX + id)));
+        }
+
+        public double GetRank(string id)
+        {
+            int count = 0;
+            string rankStr = "";
+            while (count < MaxWaitingTime)
+            {
+                rankStr = _storage.GetValue(Constants.RANK_PREFIX + id);
+                if (!String.IsNullOrWhiteSpace(rankStr))
+                {
+                    return Math.Round(Convert.ToDouble(rankStr), 2);
+                }
+                else
+                {
+                    Thread.Sleep(DelayTime);
+                    count++;
+                }
+            }
+            return 0.0;
         }
     }
 }
