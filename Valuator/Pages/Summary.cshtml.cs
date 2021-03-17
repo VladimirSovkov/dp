@@ -3,6 +3,7 @@ using System.Threading;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Valuator.Storage;
+using Valuator.Toolkit;
 
 namespace Valuator.Pages
 {
@@ -33,7 +34,7 @@ namespace Valuator.Pages
         public double GetRank(string id)
         {
             int count = 0;
-            string rankStr = "";
+            string rankStr;
             while (count < MaxWaitingTime)
             {
                 rankStr = _storage.GetValue(Constants.RANK_PREFIX + id);
