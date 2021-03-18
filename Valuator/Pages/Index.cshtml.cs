@@ -33,7 +33,7 @@ namespace Valuator.Pages
         {
             _logger.LogDebug(text);
 
-            if (String.IsNullOrEmpty(text))
+            if (String.IsNullOrWhiteSpace(text))
             {
                 return Redirect($"summary");
             }
