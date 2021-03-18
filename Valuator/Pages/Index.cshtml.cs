@@ -36,6 +36,11 @@ namespace Valuator.Pages
         {
             _logger.LogDebug(text);
 
+            if (String.IsNullOrWhiteSpace(text))
+            {
+                return Redirect($"summary");
+            }
+
             string id = Guid.NewGuid().ToString();
 
             string similarityKey = Constants.SIMILARITY_PREFIX + id;
