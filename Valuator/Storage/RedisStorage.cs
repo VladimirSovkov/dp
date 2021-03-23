@@ -14,7 +14,7 @@ namespace Valuator.Storage
             _db = _connection.GetDatabase();
         }
 
-        public void Load(string key, string value)
+        public void AddByKey(string key, string value)
         {
             _db.StringSet(key, value);
         }

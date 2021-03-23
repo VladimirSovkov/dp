@@ -49,11 +49,11 @@ namespace Valuator.Pages
             {
                 simularity = 1;
             }
-            _storage.Load(similarityKey, simularity.ToString());
+            _storage.AddByKey(similarityKey, simularity.ToString());
             PublishSimilarityCalculateEvent(id, simularity);
 
             string textKey = Constants.TEXT_PREFIX + id;
-            _storage.Load(textKey, text);
+            _storage.AddByKey(textKey, text);
 
             CancellationTokenSource cts = new CancellationTokenSource();
             Task.Factory.StartNew(() => CalculateAndSaveRank(id), cts.Token);

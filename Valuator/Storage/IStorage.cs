@@ -4,7 +4,7 @@ namespace Valuator.Storage
 {
     public interface IStorage
     {
-        void Load(string key, string value);
+        void AddByKey(string key, string value);
         string GetValue(string key);
         List<string> GetValues(string prefix);
     }
