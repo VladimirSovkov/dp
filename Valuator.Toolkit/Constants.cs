@@ -1,6 +1,6 @@
 ﻿namespace Valuator.Toolkit
 {
-    static public class Constants
+    public static class Constants
     {
         public const string RANK_PREFIX = "RANK-";
         public const string TEXT_PREFIX = "TEXT-";

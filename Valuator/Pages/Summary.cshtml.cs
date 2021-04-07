@@ -26,8 +26,7 @@ namespace Valuator.Pages
 
         public void OnGet(string id)
         {
-            string shard = _storage.GetShardKeyById(id);
-            _logger.LogDebug($"id = {id}, shard = {shard}");
+            _logger.LogDebug($"LOOKUP: {id}, {_storage.GetShardKeyById(id)}.");
             Rank = GetRank(id);
             Similarity = Math.Round(Convert.ToDouble(_storage.GetValue(id, Constants.SIMILARITY_PREFIX + id)));
         }

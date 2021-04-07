@@ -32,7 +32,7 @@ namespace RankCalculator
                 string rankKey = Constants.RANK_PREFIX + id;
                 var rank = CalculateRank(text);
                 _storage.AddValueByKey(id, rankKey, rank.ToString());
-                _logger.LogDebug($"Rank = {rank}");
+                _logger.LogDebug($"LOOKUP: {id}, {_storage.GetShardKeyById(id)}.");
 
                 await PublishRankCalculateEvent(id, Math.Round(rank, 2));
             });

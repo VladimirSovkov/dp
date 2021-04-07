@@ -34,7 +34,6 @@ namespace Valuator.Pages
 
         public IActionResult OnPost(string text, string countrySegment)
         {
-            _logger.LogDebug(text);
 
             if (String.IsNullOrWhiteSpace(text))
             {
@@ -44,7 +43,8 @@ namespace Valuator.Pages
             string id = Guid.NewGuid().ToString();
 
             _storage.AddShardKeyById(id, countrySegment);
-            
+            _logger.LogDebug($"LOOKUP: {id}, {countrySegment}.");
+
             string similarityKey = Constants.SIMILARITY_PREFIX + id;
             int simularity = 0;
             if (_storage.IsContainsText(text))
