@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using Valuator.Storage;
+using Valuator.Toolkit.Storage;
 
 namespace RankCalculator
 {

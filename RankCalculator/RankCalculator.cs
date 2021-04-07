@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Valuator.Storage;
 using Valuator.Toolkit;
 using Valuator.Toolkit.EventData;
+using Valuator.Toolkit.Storage;
 
 namespace RankCalculator
 {
@@ -28,10 +28,10 @@ namespace RankCalculator
             _subscription = _connection.SubscribeAsync(Constants.RANK_CALCULATE, "rank-calculator", async (sender, args) =>
             {
                 string id = Encoding.UTF8.GetString(args.Message.Data);
-                var text = _storage.GetValue(Constants.TEXT_PREFIX + id);
+                var text = _storage.GetValue(id, Constants.TEXT_PREFIX + id);
                 string rankKey = Constants.RANK_PREFIX + id;
                 var rank = CalculateRank(text);
-                _storage.AddByKey(rankKey, rank.ToString());
+                _storage.AddValueByKey(id, rankKey, rank.ToString());
                 _logger.LogDebug($"Rank = {rank}");
 
                 await PublishRankCalculateEvent(id, Math.Round(rank, 2));

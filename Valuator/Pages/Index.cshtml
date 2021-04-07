@@ -1,8 +1,6 @@
 ﻿@page
 @model IndexModel
-@{
-    ViewData["Title"] = "Home page";
-}
+@{ ViewData["Title"] = "Home page"; }
 
 <div class="text-center">
     <form method="post">
@@ -10,6 +8,15 @@
         <div class="col-10">
             <textarea name="text" rows="5" cols="50" required></textarea>
             <input type="submit" />
+        </div>
+        <div class="col-10">
+            <select name="countrySegment" required>
+                <option value="RUS">Russia</option>
+                <option value="EU">Germany</option>
+                <option value="EU">France</option>
+                <option value="OTHER">USA</option>
+                <option value="OTHER">India</option>
+            </select>
         </div>
     </form>
 </div>

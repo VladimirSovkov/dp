@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using NATS.Client;
-using Valuator.Storage;
 using Valuator.Toolkit;
 using Valuator.Toolkit.EventData;
+using Valuator.Toolkit.Storage;
 
 namespace Valuator.Pages
 {
@@ -32,7 +32,7 @@ namespace Valuator.Pages
 
         }
 
-        public IActionResult OnPost(string text)
+        public IActionResult OnPost(string text, string countrySegment)
         {
             _logger.LogDebug(text);
 
@@ -43,17 +43,21 @@ namespace Valuator.Pages
 
             string id = Guid.NewGuid().ToString();
 
+            _storage.AddShardKeyById(id, countrySegment);
+            
             string similarityKey = Constants.SIMILARITY_PREFIX + id;
             int simularity = 0;
-            if (_storage.GetValues(Constants.TEXT_PREFIX).Where(x => x == text).Any())
+            if (_storage.IsContainsText(text))
             {
                 simularity = 1;
             }
-            _storage.AddByKey(similarityKey, simularity.ToString());
+            
+            _storage.AddValueByKey(id, similarityKey, simularity.ToString());
             PublishSimilarityCalculateEvent(id, simularity);
 
             string textKey = Constants.TEXT_PREFIX + id;
-            _storage.AddByKey(textKey, text);
+            _storage.AddValueByKey(id, textKey, text);
+            _storage.AddTextToSet(id, text);
 
             CancellationTokenSource cts = new CancellationTokenSource();
             Task.Factory.StartNew(() => CalculateAndSaveRank(id), cts.Token);

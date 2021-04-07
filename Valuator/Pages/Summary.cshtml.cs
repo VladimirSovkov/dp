@@ -2,8 +2,8 @@
 using System.Threading;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using Valuator.Storage;
 using Valuator.Toolkit;
+using Valuator.Toolkit.Storage;
 
 namespace Valuator.Pages
 {
@@ -26,9 +26,10 @@ namespace Valuator.Pages
 
         public void OnGet(string id)
         {
-            _logger.LogDebug(id);
+            string shard = _storage.GetShardKeyById(id);
+            _logger.LogDebug($"id = {id}, shard = {shard}");
             Rank = GetRank(id);
-            Similarity = Math.Round(Convert.ToDouble(_storage.GetValue(Constants.SIMILARITY_PREFIX + id)));
+            Similarity = Math.Round(Convert.ToDouble(_storage.GetValue(id, Constants.SIMILARITY_PREFIX + id)));
         }
 
         public double GetRank(string id)
@@ -37,7 +38,7 @@ namespace Valuator.Pages
             string rankStr;
             while (count < MaxWaitingTime)
             {
-                rankStr = _storage.GetValue(Constants.RANK_PREFIX + id);
+                rankStr = _storage.GetValue(id, Constants.RANK_PREFIX + id);
                 if (!String.IsNullOrWhiteSpace(rankStr))
                 {
                     return Math.Round(Convert.ToDouble(rankStr), 2);
