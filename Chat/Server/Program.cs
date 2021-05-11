@@ -36,11 +36,14 @@ namespace Service
                     Socket handler = listener.Accept();
                     byte[] buf = new byte[1024];
                     string data = null;
-                    
-                    // RECEIVE
-                    int bytesRec = handler.Receive(buf);
 
-                    data += Encoding.UTF8.GetString(buf, 0, bytesRec);
+                    do
+                    {
+                        int bytesRec = handler.Receive(buf);
+                        data += Encoding.UTF8.GetString(buf, 0, bytesRec);
+                    }
+                    while (handler.Available > 0);
+
                     Console.WriteLine("Message received: {0}", data);
 
                     _history.Add(data);
